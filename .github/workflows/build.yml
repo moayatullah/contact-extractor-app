@@ -2,26 +2,22 @@ name: Build APK
 
 on:
   push:
-      branches: [ main ]
+    branches:
+      - main
 
-      jobs:
-        build:
-            runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-                steps:
-                    - name: Checkout
-                          uses: actions/checkout@v3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-                              - name: Install dependencies
-                                    run: |
-                                            sudo apt-get update
-                                                    sudo apt-get install -y libtinfo6
+      - name: Build with Buildozer
+        uses: digreatbrian/buildozer-action@v1
 
-                                                        - name: Build APK
-                                                              uses: digreatbrian/buildozer-action@v1
-
-                                                                  - name: Upload APK
-                                                                        uses: actions/upload-artifact@v4
-                                                                              with:
-                                                                                      name: apk
-                                                                                              path: bin/*.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: bin/*.apk
