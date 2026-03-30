@@ -1,23 +1,35 @@
-name: Build APK
+name: Android Build
 
 on:
-  push:
-    branches:
-      - main
+ # push:
+   # branches: [ main, develop ]
+ # pull_request:
+  #  branches: [ main ]
+  workflow_dispatch:  # Ermöglicht manuelle Ausführung des Workflows
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Build with Buildozer
-        uses: digreatbrian/buildozer-action@v1
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew assembleRelease
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release
+        path: app/build/outputs/apk/release/app-release-unsigned.apk
